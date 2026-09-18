@@ -1,65 +1,127 @@
 /**
  * SpendWise Interactive Tracking Engine
- * Week 7 DOM & Array Data Structures Assignment
+ * Week 7 DOM & Array Data Structures Assignment - Stabilized
  */
 
-// 2. Work with Multiple Records: Array to manage transaction objects
+// Global App Variables
 let expensesArray = [];
 let monthlyBudgetLimit = 2500.00;
 
-// Initialize form elements and triggers after layout loads completely
-document.addEventListener("DOMContentLoaded", () => {
-    // Select relevant DOM components
+// Wait for the webpage to load before running setup
+document.addEventListener("DOMContentLoaded", function() {
     const expenseForm = document.getElementById("expense-form");
     const setBudgetBtn = document.getElementById("set-budget-btn");
 
-    // 5. Handle User Interactions: Event listeners for form actions
-    expenseForm.addEventListener("submit", handleNewExpenseSubmit);
-    setBudgetBtn.addEventListener("click", handleBudgetUpdate);
+    if (expenseForm) {
+        expenseForm.addEventListener("submit", handleNewExpenseSubmit);
+    }
+    if (setBudgetBtn) {
+        setBudgetBtn.addEventListener("click", handleBudgetUpdate);
+    }
 
-    // Initial paint to draw default values correctly
     renderDashboardMetrics();
 });
 
-/**
- * Validates updates to global allocation parameters
- */
+// Function 1: Updates the monthly budget configuration
 function handleBudgetUpdate() {
     const budgetInput = document.getElementById("budget-input");
+    if (!budgetInput) return;
+
     const parsedValue = parseFloat(budgetInput.value);
 
-    if (isNaN(parsedValue) || parsedValue ${item.title}</span>
-            <span class="item-amount">$${item.amount.toFixed(2)}</span>
-        `;
-        transactionListContainer.appendChild(listItemNode);
+    if (isNaN(parsedValue) || parsedValue <= 0) {
+        alert("Please enter a valid positive number.");
+        return;
     }
 
-    // Calculate balances
+    monthlyBudgetLimit = parsedValue;
+    budgetInput.value = ""; 
+    renderDashboardMetrics();
+}
+
+// Function 2: Handles new expense form submissions
+function handleNewExpenseSubmit(event) {
+    event.preventDefault(); 
+
+    const nameInput = document.getElementById("expense-name");
+    const amountInput = document.getElementById("expense-amount");
+
+    if (!nameInput || !amountInput) return;
+
+    const expenseTitle = nameInput.value.trim();
+    const expenseCost = parseFloat(amountInput.value);
+
+    if (!expenseTitle || isNaN(expenseCost) || expenseCost <= 0) {
+        alert("Please enter a valid description and cost.");
+        return;
+    }
+
+    // Add new object to our arrays data structure
+    const newTransactionRecord = {
+        id: Date.now(),
+        title: expenseTitle,
+        amount: expenseCost
+    };
+
+    expensesArray.push(newTransactionRecord);
+
+    nameInput.value = "";
+    amountInput.value = "";
+
+    renderDashboardMetrics();
+}
+
+// Function 3: Processes metrics and loops through arrays data to update DOM
+function renderDashboardMetrics() {
+    let totalAccumulatedSpending = 0.0;
+    const transactionListContainer = document.getElementById("transaction-list");
+    
+    if (transactionListContainer) {
+        transactionListContainer.innerHTML = "";
+
+        // Loop through data array entries
+        for (let i = 0; i < expensesArray.length; i++) {
+            const item = expensesArray[i];
+            totalAccumulatedSpending += item.amount;
+
+            const listItemNode = document.createElement("li");
+            listItemNode.className = "ledger-item";
+            listItemNode.innerHTML = `
+                <span class="item-title">${item.title}</span>
+                <span class="item-amount">$${item.amount.toFixed(2)}</span>
+            `;
+            transactionListContainer.appendChild(listItemNode);
+        }
+    }
+
+    // Calculate dynamic values
     const currentNetRemainder = monthlyBudgetLimit - totalAccumulatedSpending;
 
-    // Inject summary panel text nodes
-    document.getElementById("display-budget").innerText = `$${monthlyBudgetLimit.toFixed(2)}`;
-    document.getElementById("display-expenses").innerText = `$${totalAccumulatedSpending.toFixed(2)}`;
-    document.getElementById("display-balance").innerText = `$${currentNetRemainder.toFixed(2)}`;
+    // Display basic updates to screen text blocks
+    const budgetDisplay = document.getElementById("display-budget");
+    const expensesDisplay = document.getElementById("display-expenses");
+    const balanceDisplay = document.getElementById("display-balance");
 
-    // 1. Implement Decision Making: Conditional status formatting checks
-    const balanceTextElement = document.getElementById("display-balance");
+    if (budgetDisplay) budgetDisplay.innerText = `$${monthlyBudgetLimit.toFixed(2)}`;
+    if (expensesDisplay) expensesDisplay.innerText = `$${totalAccumulatedSpending.toFixed(2)}`;
+    if (balanceDisplay) balanceDisplay.innerText = `$${currentNetRemainder.toFixed(2)}`;
+
+    // Decision checking: Alert box formatting conditions
     const alertBoxContainer = document.getElementById("budget-alert");
+    if (!balanceDisplay) return;
 
     if (currentNetRemainder < 0) {
-        balanceTextElement.style.color = "#ef4444"; // Crimson danger indicator
-        
-        // Expose structured status messaging card
-        alertBoxContainer.className = "alert-box danger";
-        alertBoxContainer.innerText = `Warning: Overrun detected! You have exceeded your budget parameter limit allocation by $${Math.abs(currentNetRemainder).toFixed(2)}.`;
+        balanceDisplay.style.color = "#ef4444"; 
+        if (alertBoxContainer) {
+            alertBoxContainer.className = "alert-box danger";
+            alertBoxContainer.innerText = `Warning: Overrun detected! Budget exceeded by $${Math.abs(currentNetRemainder).toFixed(2)}.`;
+        }
     } else {
-        balanceTextElement.style.color = "#10b981"; // Healthy account emerald green
-        
-        if (expensesArray.length > 0) {
+        balanceDisplay.style.color = "#10b981"; 
+        if (expensesArray.length > 0 && alertBoxContainer) {
             alertBoxContainer.className = "alert-box success";
-            alertBoxContainer.innerText = `Safe: Your financial expenditures are well inside calculated ceiling guidelines. Remaining cushion: $${currentNetRemainder.toFixed(2)}.`;
-        } else {
-            // Keep container target concealed early if no entries are present
+            alertBoxContainer.innerText = `Safe: Expenses inside calculated guidelines. Remaining cushion: $${currentNetRemainder.toFixed(2)}.`;
+        } else if (alertBoxContainer) {
             alertBoxContainer.className = "alert-box hide-element";
         }
     }
