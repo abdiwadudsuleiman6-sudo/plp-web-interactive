@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpendWise Interactive Dashboard</title>
+    <!-- Google Fonts Integration -->
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+        
+        <!-- Sidebar Navigation Menu -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>SpendWise</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="active">Dashboard</a>
+                <a href="#">Transactions</a>
+                <a href="#">Budgets</a>
+                <a href="#">Analytics</a>
+                <a href="#">Settings</a>
+            </nav>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <div class="main-content">
+            
+            <!-- Dashboard Header Component -->
+            <header class="dashboard-header">
+                <div class="header-title">
+                    <h1>Interactive Dashboard</h1>
+                    <p>Manage multiple entries, track budget ceilings, and analyze records live.</p>
+                </div>
+                <div class="budget-setup-form">
+                    <!-- Form input to modify baseline budget values dynamically -->
+                    <input type="number" id="budget-input" placeholder="Set Monthly Budget ($)" min="1">
+                    <button id="set-budget-btn" class="btn-primary">Update Budget</button>
+                </div>
+            </header>
+
+            <!-- Real-time JavaScript Calculation Metric Cards -->
+            <section class="calculation-summary-card">
+                <h2>Live Portfolio Summary</h2>
+                <div class="summary-metrics">
+                    <p><strong>Total Allocation:</strong> <span id="display-budget">$2500.00</span></p>
+                    <p><strong>Total Spending:</strong> <span id="display-expenses">$0.00</span></p>
+                    <p><strong>Net Remainder:</strong> <span id="display-balance" class="bold-text">$2500.00</span></p>
+                </div>
+                <!-- Interactive Alert Box Component for critical warnings -->
+                <div id="budget-alert" class="alert-box hide-element"></div>
+            </section>
+
+            <!-- Dynamic Input Form Section (User Interaction Capture) -->
+            <section class="card input-section">
+                <h2>Record New Transaction</h2>
+                <form id="expense-form" onsubmit="return false;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expense-name">Expense Label</label>
+                            <input type="text" id="expense-name" placeholder="e.g., Office Supplies, Lunch" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-amount">Cost Amount ($)</label>
+                            <input type="number" id="expense-amount" step="0.01" placeholder="0.00" min="0.01" required>
+                        </div>
+                        <div class="form-group btn-group">
+                            <button type="submit" id="add-expense-btn" class="btn-primary">Add Entry</button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Transactions Log Panel Component -->
+            <section class="card history-section">
+                <h2>Recent Transactions Ledger</h2>
+                <div class="ledger-container">
+                    <ul id="transaction-list" class="ledger-list">
+                        <!-- Dynamic list items will be injected here via script loops -->
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+    <!-- Connect Everything Together: Linking script foundation -->
+    <script src="script.js"></script>
+</body>
+</html>
